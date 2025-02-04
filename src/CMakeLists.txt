@@ -20,25 +20,22 @@ target_sources(ssh_clipboard
 
 target_compile_features(ssh_clipboard INTERFACE cxx_std_23)
 
-target_link_libraries(ssh_clipboard
-  PRIVATE
-    config
-    clipboard_impl
-  PUBLIC
-    absl::base
-    absl::strings
-)
 
 # Platform-specific clipboard access
-
-add_library(clipboard_impl STATIC)
 
 if(WIN32)
   add_subdirectory(windows)
   target_link_libraries(ssh_clipboard windows_clipboard_impl)
 elseif(APPLE)
   add_subdirectory(mac)
-  target_link_libraries(ssh_clipboard mac_clipboard_impl)
+  target_link_libraries(ssh_clipboard
+    PRIVATE
+      config
+      mac_clipboard_impl
+    PUBLIC
+      absl::base
+      absl::strings
+  )
 elseif(UNIX)
   add_subdirectory(linux)
   target_link_libraries(ssh_clipboard linux_clipboard_impl)
