@@ -14,8 +14,12 @@ namespace ssh_clipboard::event_loop {
 
 class LinuxEventLoop final : public EventLoop {
  public:
-  LinuxEventLoop(int max_events);
+  explicit LinuxEventLoop(int max_events);
   ~LinuxEventLoop() override;
+  LinuxEventLoop(const LinuxEventLoop&) = delete;
+  LinuxEventLoop(LinuxEventLoop&&) = delete;
+  LinuxEventLoop& operator=(const LinuxEventLoop&) = delete;
+  LinuxEventLoop& operator=(LinuxEventLoop&&) = delete;
   void run() override;
   void stop() override;
   void add_fd(int fd, std::function<void(int)> callback) overide;

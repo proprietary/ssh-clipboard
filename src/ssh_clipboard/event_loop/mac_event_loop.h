@@ -14,7 +14,11 @@
 namespace ssh_clipboard::event_loop {
 class MacEventLoop final : public EventLoop {
  public:
-  MacEventLoop(int max_events);
+  explicit MacEventLoop(int max_events);
+  MacEventLoop(const MacEventLoop&) = delete;
+  MacEventLoop& operator=(const MacEventLoop&) = delete;
+  MacEventLoop(MacEventLoop&&) = delete;
+  MacEventLoop& operator=(MacEventLoop&&) = delete;
   ~MacEventLoop() override;
   void run() override;
   void stop() override;
