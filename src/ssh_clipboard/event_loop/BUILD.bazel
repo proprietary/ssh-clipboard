@@ -1,0 +1,74 @@
+load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test")
+
+cc_library(
+    name = "event_loop",
+    srcs = [
+        "event_loop.cc",
+    ],
+    hdrs = [
+        "event_loop.h",
+    ],
+    copts = [
+        "-std=c++23",
+    ],
+    strip_include_prefix = "/src",
+    deps = select({
+        "@platforms//os:macos": [
+            ":mac_event_loop",
+        ],
+        "@platforms//os:linux": [
+            ":linux_event_loop",
+        ],
+    }),
+    visibility = ["//visibility:public"],
+)
+
+cc_library(
+    name = "mac_event_loop",
+    strip_include_prefix = "/src",
+    copts = [
+        "-std=c++23",
+    ],
+    srcs = [
+        "mac_event_loop.cc",
+    ],
+    hdrs = [
+        "mac_event_loop.h",
+    ],
+    deps = [
+        "@abseil-cpp//absl/container:flat_hash_map",
+    ],
+    target_compatible_with = ["@platforms//os:macos"],
+)
+
+cc_library(
+    name = "linux_event_loop",
+    strip_include_prefix = "/src",
+    copts = [
+        "-std=c++23",
+    ],
+    srcs = [
+        "linux_event_loop.cc",
+    ],
+    hdrs = [
+        "linux_event_loop.h",
+    ],
+    deps = [
+        "@abseil-cpp//absl/container:flat_hash_map",
+    ],
+    target_compatible_with = ["@platforms//os:linux"],
+)
+
+cc_test(
+    name = "event_loop_test",
+    srcs = [
+        "event_loop_test.cc",
+    ],
+    copts = [
+        "-std=c++23",
+    ],
+    deps = [
+        ":event_loop",
+        "@googletest//:gtest_main",
+    ],
+)
