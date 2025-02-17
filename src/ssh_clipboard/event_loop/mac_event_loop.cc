@@ -1,8 +1,8 @@
 #include "ssh_clipboard/event_loop/mac_event_loop.h"
 
 namespace ssh_clipboard::event_loop {
-  auto create_event_loop(int max_events) {
-    return MacEventLoop{max_events};
+  auto create_event_loop(int max_events) -> std::unique_ptr<EventLoop> {
+    return std::make_unique<MacEventLoop>(max_events);
   }
 
   MacEventLoop::MacEventLoop(int max_events) : poll_fd_{kqueue()}, running_{false}, events_{static_cast<size_t>(max_events)} {

@@ -33,6 +33,7 @@ cc_library(
         "mac_event_loop.cc",
     ],
     hdrs = [
+        "event_loop.h",
         "mac_event_loop.h",
     ],
     deps = [
@@ -51,6 +52,7 @@ cc_library(
         "linux_event_loop.cc",
     ],
     hdrs = [
+        "event_loop.h",
         "linux_event_loop.h",
     ],
     deps = [

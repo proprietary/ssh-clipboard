@@ -1,6 +1,10 @@
 #include "ssh_clipboard/event_loop/linux_event_loop.h"
 
 namespace ssh_clipboard::event_loop {
+  auto create_event_loop(int max_events) -> std::unique_ptr<EventLoop> {
+    return std::make_unique<LinuxEventLoop>(max_events);
+  }
+
   LinuxEventLoop::LinuxEventLoop(int max_events) : epoll_fd_{-1}, running_{false}, events_{static_cast<size_t>(max_events)} {
     epoll_fd_ = epoll_create1(0);
     if (epoll_fd < 0) {

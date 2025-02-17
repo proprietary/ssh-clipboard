@@ -4,21 +4,19 @@
 #include <functional>
 #include <utility>
 #include <concepts>
+#include <memory>
 
 namespace ssh_clipboard::event_loop {
-  template<typename FileDescriptorT>
-  using Callback = std::function<void(FileDescriptorT)>;
-
-  template<typename T, typename FileDescriptorT>
-  concept EventLoop = requires(T t, int max_events) {
-    { t.run() } -> std::same_as<void>;
-    { t.stop() } -> std::same_as<void>;
-    { T(max_events) } -> std::same_as<T>;
-    { t.add_fd(std::declval<FileDescriptorT>(), std::declval<Callback<FileDescriptorT>>()) } -> std::same_as<void>;
-    { t.remove_fd(std::declval<FileDescriptorT>()) } -> std::same_as<void>;
+  class EventLoop {
+  public:
+    virtual ~EventLoop() = default;
+    virtual void run() = 0;
+    virtual void stop() = 0;
+    virtual void add_fd(int fd, std::function<void(int)> callback) = 0;
+    virtual void remove_fd(int fd) = 0;
   };
 
-  auto create_event_loop(int max_events);
+  auto create_event_loop(int max_events) -> std::unique_ptr<EventLoop>;
 } // namespace ssh_clipboard::event_loop
 
 #endif // _INCLUDE_SSH_CLIPBOARD_EVENT_LOOP_EVENT_LOOP_H
