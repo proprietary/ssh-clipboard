@@ -1,0 +1,12 @@
+load("@rules_cc//cc:defs.bzl", "cc_library")
+
+cc_library(
+    name = "clipboard",
+    deps = [
+        "//src/ssh_clipboard/clipboard:clipboard_interface",
+    ] + select({
+        "@platforms//os:macos": ["//src/ssh_clipboard/mac_clipboard:clipboard"],
+        "@platforms//os:linux": ["//src/ssh_clipboard/linux_clipboard:clipboard"],
+    }),
+    visibility = ["//visibility:public"],
+)

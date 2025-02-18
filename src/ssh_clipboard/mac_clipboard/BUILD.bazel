@@ -1,0 +1,42 @@
+load("@rules_swift//swift:swift_library.bzl", "swift_library")
+load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test")
+
+
+cc_library(
+    name = "mac_clipboard_access",
+    strip_include_prefix = "/src",
+    visibility = ["//visibility:public"],
+    copts = ["-std=c++23"],
+    srcs = [
+        "mac_clipboard_access.cc",
+    ],
+    hdrs = [
+        "mac_clipboard_access.h",
+    ],
+    deps = [
+        "//src/ssh_clipboard/clipboard:clipboard_interface",
+        ":native_clipboard_access",
+    ],
+)
+
+swift_library(
+    name = "native_clipboard_access",
+    srcs = [
+        "native_clipboard_access.swift",
+    ],
+    copts = [
+        "-cxx-interoperability-mode=default",
+    ],
+    generates_header = True,
+    generated_header_name = "native_clipboard_access.h",
+)
+
+cc_test(
+    name = "mac_clipboard_access_test",
+    srcs = ["mac_clipboard_access_test.cc"],
+    deps = [
+        ":mac_clipboard_access",
+        "@googletest//:gtest_main",
+    ],
+    copts = ["-std=c++23"],
+)

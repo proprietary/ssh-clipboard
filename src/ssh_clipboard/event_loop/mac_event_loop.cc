@@ -17,6 +17,7 @@ MacEventLoop::MacEventLoop(int max_events)
 }
 
 void MacEventLoop::run() {
+  running_.store(true);
   while (running_) {
     const int n =
         kevent(poll_fd_, nullptr, 0, events_.data(), events_.size(), nullptr);

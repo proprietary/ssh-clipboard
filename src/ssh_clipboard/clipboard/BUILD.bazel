@@ -1,0 +1,10 @@
+load("@rules_cc//cc:defs.bzl", "cc_library")
+
+cc_library(
+    name = "clipboard_interface",
+    strip_include_prefix = "/src",
+    srcs = ["clipboard_interface.cc"],
+    hdrs = ["clipboard_interface.h"],
+    copts = ["-std=c++23"],
+    visibility = ["//visibility:public"],
+)

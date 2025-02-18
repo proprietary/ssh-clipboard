@@ -18,6 +18,7 @@ LinuxEventLoop::LinuxEventLoop(int max_events)
 LinuxEventLoop::~LinuxEventLoop() { close(epoll_fd_); }
 
 void run() {
+  running_.store(true);
   while (running_) {
     const int n = epoll_wait(epoll_fd_, events_.data(), events_.size(), -1);
     if (n < 0) {
