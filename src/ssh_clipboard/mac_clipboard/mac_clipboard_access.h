@@ -26,6 +26,7 @@ class MacClipboardAccess final : public Clipboard {
 
  private:
   void run();
+  void stop();
   static constexpr std::chrono::duration kPollInterval =
       std::chrono::milliseconds(100);
   std::atomic<bool> running_;
@@ -34,7 +35,6 @@ class MacClipboardAccess final : public Clipboard {
   std::function<void(std::vector<uint8_t>&)> on_copy_callback_;
   std::thread thread_;
   std::mutex mutex_;
-  std::condition_variable cv_;
 };
 }  // namespace ssh_clipboard::clipboard
 

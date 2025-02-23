@@ -27,14 +27,12 @@ MacClipboardAccess::MacClipboardAccess()
       thread_{&MacClipboardAccess::run, this} {}
 
 void MacClipboardAccess::run() {
+  running_ = true;
   while (running_) {
-    {
-      std::unique_lock<std::mutex> lock{mutex_};
-      if (monitor_.checkForChanges()) {
-        swift::String text = monitor_.paste();
-        auto data = from_swift_string(text);
-        on_copy_callback_(data);
-      }
+    if (monitor_.checkForChanges()) {
+      swift::String text = monitor_.paste();
+      auto data = from_swift_string(text);
+      on_copy_callback_(data);
     }
     if (running_) {
       std::this_thread::sleep_for(kPollInterval);
@@ -42,14 +40,17 @@ void MacClipboardAccess::run() {
   }
 }
 
-MacClipboardAccess::~MacClipboardAccess() {
+void MacClipboardAccess::stop() {
   if (running_) {
+    std::unique_lock<std::mutex> lock{mutex_};
     running_ = false;
-  }
-  if (thread_.joinable()) {
-    thread_.join();
+    if (thread_.joinable()) {
+      thread_.join();
+    }
   }
 }
+
+MacClipboardAccess::~MacClipboardAccess() { stop(); }
 
 void MacClipboardAccess::on_copy(
     std::function<void(std::vector<uint8_t>&)> callback) {
@@ -57,11 +58,13 @@ void MacClipboardAccess::on_copy(
 }
 
 void MacClipboardAccess::copy(const std::vector<uint8_t>& data) {
+  std::unique_lock<std::mutex> lock{mutex_};
   std::string text(data.begin(), data.end());
   monitor_.copy(text);
 }
 
 auto MacClipboardAccess::paste() -> std::vector<uint8_t> {
+  std::unique_lock<std::mutex> lock{mutex_};
   auto text = monitor_.paste();
   return from_swift_string(text);
 }
